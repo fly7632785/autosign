@@ -35,6 +35,29 @@ def ungzip(data):
     return data
 
 
+holiday = [
+    # test
+    # '2018-04-09',
+    # 劳动节
+    '2018-04-29', '2018-04-30', '2018-05-01',
+    # 端午
+    '2018-06-16', '2018-06-17', '2018-06-18',
+    # 中秋
+    '2018-09-23', '2018-09-24', '2018-09-24',
+    # 国庆节
+    '2018-10-01', '2018-10-02', '2018-10-03',
+    '2018-10-04', '2018-10-05', '2018-10-06',
+    '2018-10-07'
+]
+
+weekWorkday = [
+    # test
+    # '2018-04-09',
+    # 劳动节
+    '2018-04-28',
+    '2018-09-29', '2018-09-30',
+]
+
 header = {
     'Connection': 'Keep-Alive',
     'Accept-Language': 'zh-CN',
@@ -146,17 +169,22 @@ print('离下次' + time.strftime('%Y-%m-%d %H:%M', time.localtime(signOutStamp)
       '签离还有:' + str(signOutTimeDelta) + '秒(' + getTime(signOutTimeDelta) + ')')
 
 # test
-# signInTimeDelta = 10
-# signOutTimeDelta = 10
+# signInTimeDelta = 3
+# signOutTimeDelta = 3
 # interval = 60
 
 
 def fun_sign_in_timer():
-    print(str(time.strftime('%Y-%m-%d %H:%M', time.localtime(time.time()))) + ' 签到')  # 打印输出
-    # 周末不签
-    if datetime.datetime.now().isoweekday() != 6 and 7 != datetime.datetime.now().isoweekday():
-        login()
-        signIn()
+    # 周末不签 节假日不签
+    thisholiday = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    isoweekday = datetime.datetime.now().isoweekday()
+    if thisholiday in holiday:
+        print(str(time.strftime('%Y-%m-%d %A %H:%M', time.localtime(time.time()))) + ' 节假日 不签到')  # 打印输出
+
+    if ((isoweekday != 6 and 7 != isoweekday) or thisholiday in weekWorkday) and thisholiday not in holiday:
+        print(str(time.strftime('%Y-%m-%d %A %H:%M', time.localtime(time.time()))) + ' 签到')  # 打印输出
+        # login()
+        # signIn()
     global signIntimer  # 定义变量
     signIntimer = threading.Timer(interval, fun_sign_in_timer)
     # 定时器构造函数主要有2个参数，第一个参数为时间，第二个参数为函数名
@@ -168,11 +196,15 @@ signIntimer.start()
 
 
 def fun_sign_out_timer():
-    print(str(time.strftime('%Y-%m-%d %H:%M', time.localtime(time.time()))) + ' 签离')  # 打印输出
     # 周末不签
-    if datetime.datetime.now().isoweekday() != 6 and 7 != datetime.datetime.now().isoweekday():
-        login()
-        signOut()
+    thisholiday = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    isoweekday = datetime.datetime.now().isoweekday()
+    if thisholiday in holiday:
+        print(str(time.strftime('%Y-%m-%d %A %H:%M', time.localtime(time.time()))) + ' 节假日 不签离')  # 打印输出
+    if ((isoweekday != 6 and 7 != isoweekday) or thisholiday in weekWorkday) and thisholiday not in holiday:
+        print(str(time.strftime('%Y-%m-%d %A %H:%M', time.localtime(time.time()))) + ' 签离')  # 打印输出
+        # login()
+        # signOut()
     global signOuttimer  # 定义变量
     signOuttimer = threading.Timer(interval, fun_sign_out_timer)
     # 定时器构造函数主要有2个参数，第一个参数为时间，第二个参数为函数名
